@@ -9,10 +9,15 @@ const starters = [
 
 export default function CoWatcher({ language, setLanguage, onAsk, busy, messages, setMessages, aiMode }) {
   const [question, setQuestion] = useState('');
-  const bottomRef = useRef(null);
+  const threadRef = useRef(null);
   const [showAll, setShowAll] = useState(false);
 
-  useEffect(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' }), [messages, busy]);
+  // Scroll only the chat box, not the page. The effect body must not return the scroll call's result:
+  // Chrome 150+ returns a Promise from scroll methods, and React would treat it as a cleanup function and crash.
+  useEffect(() => {
+    const box = threadRef.current;
+    if (box) box.scrollTop = box.scrollHeight;
+  }, [messages, busy]);
 
   async function submit(value = question) {
     const trimmed = value.trim();
@@ -30,7 +35,7 @@ export default function CoWatcher({ language, setLanguage, onAsk, busy, messages
       </div>
       <p className="feature-description">No jargon. No judgement. Ask in the language you think in.</p>
       <div className="chat-language-row"><span>REPLY IN</span><div className="language-pills"><button className={language === 'hinglish' ? 'selected' : ''} onClick={() => setLanguage('hinglish')}>Hinglish</button><button className={language === 'hindi' ? 'selected' : ''} onClick={() => setLanguage('hindi')}>हिन्दी</button><button className={language === 'english' ? 'selected' : ''} onClick={() => setLanguage('english')}>English</button></div></div>
-      <div className="chat-window">
+      <div className="chat-window" ref={threadRef}>
         {messages.length === 0 ? (
           <div className="chat-empty">
             <div className="saathi-avatar"><Bot size={21} /></div>
@@ -44,7 +49,6 @@ export default function CoWatcher({ language, setLanguage, onAsk, busy, messages
               <div className={`message-content ${message.role}`}><p>{message.content}</p>{message.source && <span className="message-source">{message.source === 'groq' ? 'GROQ AI' : 'DEMO RESPONSE'}</span>}</div>
             </div>)}
             {busy && <div className="chat-message assistant"><div className="message-avatar assistant"><Bot size={15} /></div><div className="typing-bubble"><i /><i /><i /></div></div>}
-            <div ref={bottomRef} />
           </div>
         )}
       </div>
