@@ -1,125 +1,89 @@
-# CricketSaathi — Your AI Cricket Co-watcher
+# 🏏 CricketSaathi — Your AI Cricket Co-watcher
 
-CricketSaathi is a full-stack prototype built around two fan problems:
+CricketSaathi is a full-stack web application that acts as an AI co-watcher for cricket fans. A scoreboard gives you numbers but not the story, so CricketSaathi solves two fan problems: catching up fast after looking away, and understanding the game in your own language.
 
-1. **Catch Me Up:** a one-tap, approximately 15-second summary of what happened, the current score situation, and what to watch next.
+🚀 **Live Demo:** _Add your deployed URL here_
+
+> ⚠️ **Prototype data notice:** The included Pune Panthers vs Jaipur Jaguars match is **simulated demonstration data** with fictional teams and players. It is not a real or licensed live score feed, and the UI labels it as an interactive demo. Connect a licensed cricket data provider before presenting it as real live match coverage.
+
+---
+
+## 💡 What It Does
+
+1. **Catch Me Up:** a one-tap, ~15-second summary of what happened, the current score situation, and what to watch next.
 2. **Hinglish Co-watcher:** a match-aware assistant that explains cricket rules, terminology, and the current chase in Hinglish, Hindi, or English.
 
-It also includes a live-style scoreboard, an interactive ball-by-ball demo feed, a runs-per-over chart, and a key-moments timeline.
+---
 
-> **Prototype data notice:** the included Pune Panthers vs Jaipur Jaguars match is simulated demonstration data with fictional teams and players. It is not a real or licensed live score feed. The UI labels the match as an interactive demo. Connect a licensed cricket data provider before presenting it as real live match coverage.
+## 🚀 Features
 
-## Features
+- Responsive dark sports dashboard for desktop and mobile
+- Live-style scoreboard with a runs-per-over chart and key-moments timeline
+- Demo match engine with **Advance 1 ball**, **Look away for 2 overs**, and reset controls
+- **Catch Me Up since you last looked:** recaps exactly the balls you missed (or the last 2 or 5 overs)
+- Recaps in **Hinglish, Hindi, or English**
+- **Ask Saathi** chat with suggested prompts and conversation context
+- Backend-calculated score, wickets, overs, target, runs required, balls remaining, current run rate, and required run rate
+- Isolated match per browser tab, so visitors never affect each other
+- Deterministic demo responses when no Groq key is configured or the Groq request fails
+- AI request rate limiting and basic HTTP security headers
 
-- Responsive dark sports dashboard for desktop and mobile.
-- Demo match engine with **Advance 1 ball**, **Look away for 2 overs** and reset controls. Every browser tab gets its own match, so visitors never affect each other.
-- **Catch Me Up since you last looked:** the recap covers exactly the balls you missed (or the last 2 or 5 overs).
-- Score, wickets, overs, target, runs required, balls remaining, current run rate, and required run rate recalculated by the backend.
-- Catch Me Up recap in Hinglish, Hindi, or English.
-- Ask Saathi chat with suggested prompts and conversation context.
-- Groq API integration kept on the server (the API key is never sent to the browser).
-- Deterministic demo responses when no Groq key is configured or the Groq request fails.
-- AI request rate limiting and basic HTTP security headers.
+---
 
-## Tech stack
+## 🛠 Tech Stack
 
-- **Frontend:** React 18, Vite, custom CSS, Recharts, Lucide React
-- **Backend:** Node.js, Express
-- **LLM:** Groq API (default model: `openai/gpt-oss-20b`, configurable)
-- **Match data:** in-memory simulated match engine for this prototype
+### Frontend
+- React 18
+- Vite
+- Custom CSS
+- Recharts
+- Lucide React
 
-No database is required to run the demo. The match state resets when the backend restarts.
+### Backend
+- Node.js
+- Express.js
 
-## Requirements
+### AI Integration
+- Groq API (default model: `openai/gpt-oss-20b`, configurable)
 
-- Node.js 20 or newer
-- npm 10 or newer (npm bundled with a recent Node.js version is fine)
-- A Groq API key for live LLM-generated responses (optional for local demo mode)
+### Match Data
+- In-memory simulated match engine (no database required)
 
-## Run locally
+### Deployment
+- Single-service deployment (Express serves the built client), or split deployment with Render/Railway + Vercel
 
-Open a terminal in the `CricketSaathi` root folder.
+---
 
-### 1. Install dependencies
+## 🧠 System Architecture
 
-```bash
-npm run install:all
-```
+- The React frontend communicates with the Express backend via REST APIs
+- The Vite dev server proxies `/api` requests to the backend during development
+- The backend owns the match state and recalculates all score arithmetic and run rates
+- Each browser tab is identified by an `X-Session-Id` header and gets its own simulated match
+- Recap and chat requests are built from structured match data and event history, then sent to Groq
+- If no Groq key is set, or a request fails, the backend falls back to deterministic demo responses
+- In production, Express also serves the compiled frontend, giving one public URL with no CORS setup
 
-### 2. Configure the backend
+---
 
-Create `server/.env` by copying `server/.env.example`.
+## 🤖 AI Integration & Grounding
 
-```env
-GROQ_API_KEY=your_groq_api_key_here
-GROQ_MODEL=openai/gpt-oss-20b
-PORT=5000
-CLIENT_ORIGIN=http://localhost:5173
-NODE_ENV=development
-```
+### Groq API
+Used for:
+- Catch Me Up recaps in Hinglish, Hindi, or English
+- Answering rules and terminology questions (e.g. free hit, DLS, powerplay)
+- Explaining the current chase using live match context
 
-`GROQ_API_KEY` is optional. Leave it blank to use the clearly labelled demo response engine. Never put the Groq key in a `client/.env` file or in frontend code.
+### Grounding Choice
+Score arithmetic and event history are **structured backend data**. The LLM explains those facts rather than inventing them, which keeps recaps consistent with the scoreboard.
 
-### 3. Start frontend and backend
+### Security
+- The Groq API key stays on the server and is never sent to the browser
+- Never place the key in a `client/.env` file or in frontend code
 
-From the project root:
+---
 
-```bash
-npm run dev
-```
-
-- Frontend: <http://localhost:5173>
-- Backend health: <http://localhost:5000/api/health>
-
-The Vite development server proxies `/api` requests to the Express server.
-
-You can also run the processes in two terminals:
-
-```bash
-# Terminal 1
-cd server
-npm run dev
-```
-
-```bash
-# Terminal 2
-cd client
-npm run dev
-```
-
-### 4. Run the match-engine tests
-
-```bash
-npm run test:server
-```
-
-### 5. Create a production frontend build
-
-```bash
-npm run build
-```
-
-The compiled frontend is written to `client/dist/`.
-
-## Demo walkthrough
-
-A simple 3-minute product demo:
-
-1. Open the dashboard and explain the fan problem: a scoreboard gives numbers but does not tell a returning fan the story of the match.
-2. Click **Catch me up**. Show the recap and switch between Hinglish, Hindi, and English.
-3. In Ask Saathi, try `Free hit kya hota hai?`, `DLS method simple words mein?`, or `Why is the chase difficult now?`.
-4. Click **Advance 1 ball**. Point out that the backend updates the match state and that the recap/chat use the latest match context.
-5. Generate another recap to show how the situation changes with the feed.
-6. Explain the grounding choice: score arithmetic and event history are structured backend data; the LLM explains those facts rather than inventing them.
-
-Suggested questions for the demo:
-
-- `Free hit kya hota hai?`
-- `Why is the chase difficult now?`
-- `DLS method simple words mein?`
-- `Powerplay mein fielding restrictions kyun hoti hain?`
-
-## API endpoints
+## 🔌 API Endpoints
 
 | Method | Endpoint | Description |
 |---|---|---|
@@ -129,48 +93,33 @@ Suggested questions for the demo:
 | POST | `/api/match/reset` | Reset the simulated match |
 | GET | `/api/ai/status` | Reports Groq or demo mode |
 | GET | `/api/ai/check` | Tiny live test of your Groq key and model |
-| POST | `/api/ai/recap` | Generate a recap; body: `{ "language": "hinglish", "sinceBalls": 86 }` or `{ "lastOvers": 2 }` |
-| POST | `/api/ai/chat` | Ask a question; body: `{ "question": "...", "language": "hinglish", "history": [] }` |
+| POST | `/api/ai/recap` | Generate a recap; body `{ "language": "hinglish", "sinceBalls": 86 }` or `{ "lastOvers": 2 }` |
+| POST | `/api/ai/chat` | Ask a question; body `{ "question": "...", "language": "hinglish", "history": [] }` |
 
-Supported language values: `hinglish`, `hindi`, `english`.
+Supported `language` values: `hinglish`, `hindi`, `english`.
 
-## Deployment
+---
 
-### Single service (recommended)
+## 🎬 Demo Walkthrough
 
-The Express server also serves the built client, so one deployment gives one public URL with no CORS or proxy setup.
+A simple 3-minute product demo:
 
-- Build command: `npm install --include=dev --prefix server && npm install --include=dev --prefix client && npm run build` (the client build needs dev dependencies such as Vite)
-- Start command: `npm start`
-- Environment variables: `GROQ_API_KEY` (needed for live AI), `NODE_VERSION=20`, optionally `GROQ_MODEL`
-- Health check path (optional): `/api/health`
-- Open `/api/ai/check` after deploying to confirm your Groq key and model work.
-- Free hosts sleep when idle, so open the link a minute before you share it.
+1. Open the dashboard and explain the fan problem: a scoreboard gives numbers but not the story of the match.
+2. Click **Catch me up**, then switch between Hinglish, Hindi, and English.
+3. In Ask Saathi, try one of the suggested questions below.
+4. Click **Advance 1 ball** and note that the recap and chat now use the latest match context.
+5. Generate another recap to show how the situation changes with the feed.
+6. Explain the grounding choice: structured backend data, with the LLM explaining the facts.
 
-### Alternative: split deployment
+**Suggested questions:**
+- `Free hit kya hota hai?`
+- `Why is the chase difficult now?`
+- `DLS method simple words mein?`
+- `Powerplay mein fielding restrictions kyun hoti hain?`
 
-#### Backend (Render, Railway, or another Node host)
+---
 
-- Root directory: `server`
-- Build command: `npm install`
-- Start command: `npm start`
-- Environment variables:
-  - `GROQ_API_KEY`: your key (optional, but needed for live LLM responses)
-  - `GROQ_MODEL`: `openai/gpt-oss-20b` or another model enabled for your Groq account
-  - `CLIENT_ORIGIN`: your deployed frontend origin, e.g. `https://your-app.vercel.app`
-  - `NODE_ENV`: `production`
-  - `PORT`: normally supplied by the host
-
-#### Frontend (Vercel)
-
-- Root directory: `client`
-- Build command: `npm run build`
-- Output directory: `dist`
-- Add a `client/vercel.json` rewrite (already included) so `/api/*` calls are forwarded to your backend, or set up an equivalent Vercel rewrite to your deployed backend URL.
-
-Before deploying, replace the placeholder backend URL in `client/vercel.json` with your actual backend URL. Also set the backend `CLIENT_ORIGIN` to the Vercel production domain.
-
-## Project structure
+## 📁 Project Structure
 
 ```text
 CricketSaathi/
@@ -205,13 +154,137 @@ CricketSaathi/
 └── README.md
 ```
 
-## Important next step before a real live-match demo
+---
 
-The current feed is intentionally simulated so the entire experience is reproducible without a third-party sports API account. For real live scores, integrate a licensed cricket-data provider in the backend and map its ball-by-ball events to the match-engine response shape. Keep provider credentials on the server, preserve the `match` JSON contract, and make the UI distinguish real provider data from demo data.
+## 🚀 Deployment
 
-## Notes
+### Option 1: Single Service (Recommended)
+
+Express serves the built client, so one deployment gives one public URL.
+
+- **Build command:** `npm install --include=dev --prefix server && npm install --include=dev --prefix client && npm run build`
+- **Start command:** `npm start`
+- **Environment variables:** `GROQ_API_KEY` (for live AI), `NODE_VERSION=20`, optionally `GROQ_MODEL`
+- **Health check path (optional):** `/api/health`
+- After deploying, open `/api/ai/check` to confirm your Groq key and model work
+- Free hosts sleep when idle, so open the link a minute before you share it
+
+### Option 2: Split Deployment
+
+**Backend (Render, Railway, or another Node host)**
+- Root directory: `server`
+- Build command: `npm install`
+- Start command: `npm start`
+- Environment variables:
+  - `GROQ_API_KEY`: your key (optional, but needed for live LLM responses)
+  - `GROQ_MODEL`: `openai/gpt-oss-20b` or another model enabled for your account
+  - `CLIENT_ORIGIN`: your deployed frontend origin, e.g. `https://your-app.vercel.app`
+  - `NODE_ENV`: `production`
+  - `PORT`: normally supplied by the host
+
+**Frontend (Vercel)**
+- Root directory: `client`
+- Build command: `npm run build`
+- Output directory: `dist`
+- `client/vercel.json` rewrites `/api/*` calls to your backend. Replace the placeholder backend URL in that file with your actual backend URL, and set `CLIENT_ORIGIN` on the backend to your Vercel production domain.
+
+---
+
+## ⚙ Challenges & Learnings
+
+### Challenges
+- Keeping LLM output consistent with the actual match state
+- Keeping per-visitor demo state isolated without a database
+- Making the experience reliable when the AI provider is unavailable
+- Supporting natural Hinglish alongside Hindi and English
+
+### Learnings
+- Grounding LLMs in structured data instead of letting them compute facts
+- Designing graceful fallbacks for AI failures
+- Protecting API keys with a server-side proxy pattern
+- Rate limiting and securing AI endpoints
+- Single-service deployment for simpler hosting
+
+---
+
+## 🔮 Future Improvements
+
+- Integrate a licensed cricket data provider for real live matches, mapping its ball-by-ball events to the existing `match` JSON contract
+- Clearly distinguish real provider data from demo data in the UI
+- Add official DLS par scores and win probability calculations
+- Persist match state and chat history in a database
+- Add voice input and commentary-style audio recaps
+- Add more languages and regional commentary styles
+
+---
+
+## 🧪 Getting Started (Local Setup)
+
+### Requirements
+- Node.js 20 or newer
+- npm 10 or newer
+- A Groq API key for live LLM responses (optional for local demo mode)
+
+### 1️⃣ Clone the repository
+```bash
+git clone https://github.com/<your-username>/CricketSaathi.git
+cd CricketSaathi
+```
+
+### 2️⃣ Install dependencies
+```bash
+npm run install:all
+```
+
+### 3️⃣ Add environment variables
+
+Create `server/.env` by copying `server/.env.example`:
+
+```bash
+cp server/.env.example server/.env
+```
+
+Then set `GROQ_API_KEY` in `server/.env`. This is optional: leave it blank to use the clearly labelled demo response engine.
+
+### 4️⃣ Start frontend and backend
+```bash
+npm run dev
+```
+
+- Frontend: <http://localhost:5173>
+- Backend health: <http://localhost:5000/api/health>
+
+Or run them in two terminals:
+
+```bash
+# Terminal 1
+cd server
+npm run dev
+```
+
+```bash
+# Terminal 2
+cd client
+npm run dev
+```
+
+### 5️⃣ Run the match-engine tests
+```bash
+npm run test:server
+```
+
+### 6️⃣ Create a production build
+```bash
+npm run build
+```
+
+The compiled frontend is written to `client/dist/`.
+
+---
+
+## 📝 Notes
 
 - The prototype does not calculate official DLS par scores or win probabilities.
-- Match state is stored in memory; it is not persistent and is reset by a server restart.
-- Demo-mode answers are deterministic templates, not generated by an LLM. Add a valid Groq API key to enable Groq-powered responses.
-- Cricket laws and playing conditions can have exceptions. The assistant is designed as a fan explainer, not an official umpiring source.
+- Match state is stored in memory, is not persistent, and resets when the server restarts.
+- Demo-mode answers are deterministic templates, not LLM-generated. Add a valid Groq API key to enable Groq-powered responses.
+- Cricket laws and playing conditions have exceptions. The assistant is a fan explainer, not an official umpiring source.
