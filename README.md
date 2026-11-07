@@ -4,7 +4,7 @@ CricketSaathi is a full-stack web application that acts as an AI co-watcher for 
 
 🚀 **Live Demo:** https://cricketsaathi.onrender.com/
 
-> ⚠️ **Prototype data notice:** The included Pune Panthers vs Jaipur Jaguars match is **simulated demonstration data** with fictional teams and players. It is not a real or licensed live score feed, and the UI labels it as an interactive demo. Connect a licensed cricket data provider before presenting it as real live match coverage.
+> ⚠️ **Prototype data notice:** The included Pune Panthers vs Jaipur Jaguars match is **simulated demonstration data** with fictional teams and players. It is not a real or licensed live score feed, and the UI labels it as an interactive demo. We should connect a licensed cricket data provider before presenting it as real live match coverage.
 
 ---
 
