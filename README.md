@@ -2,7 +2,7 @@
 
 CricketSaathi is a full-stack web application that acts as an AI co-watcher for cricket fans. A scoreboard gives you numbers but not the story, so CricketSaathi solves two fan problems: catching up fast after looking away, and understanding the game in your own language.
 
-🚀 **Live Demo:** _Add your deployed URL here_
+🚀 **Live Demo:** https://cricketsaathi.onrender.com/
 
 > ⚠️ **Prototype data notice:** The included Pune Panthers vs Jaipur Jaguars match is **simulated demonstration data** with fictional teams and players. It is not a real or licensed live score feed, and the UI labels it as an interactive demo. Connect a licensed cricket data provider before presenting it as real live match coverage.
 
